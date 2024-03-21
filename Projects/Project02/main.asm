@@ -1,5 +1,4 @@
 .data   
-    # meeages
 MSG_INPUT_N:    .asciiz "Please input first positive integer n:\n"
 MSG_INPUT_K:    .asciiz "Please input second positive integer k:\n"
 
@@ -75,9 +74,10 @@ main:
 
     j       exit
 
+comb:           
     # binomialCoefficient
     # comb(n: $a0, k: $a1) => $v0
-comb:           
+
     # if k != 0 and k != n jump to calc comb_calc
     bnez    $a1,            comb_k_not_zero
     j       comb_return1
@@ -175,8 +175,9 @@ comb_calc:
 
     # }
 
-    # showInvalidValMsg()
 showInvalidValMsg:
+    # showInvalidValMsg()
+
     la      $a0,            MSG_INVALID
     li      $v0,            4
     syscall 
