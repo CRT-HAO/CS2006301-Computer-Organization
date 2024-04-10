@@ -1,16 +1,47 @@
 use std::fmt;
+use wasm_bindgen::prelude::*;
 
-pub struct Generator<'a> {
-    ntust_id: &'a str,
+const MASK: i64 = 0b111111111111111111111111111111111;
+
+#[wasm_bindgen(js_name = Generator)]
+pub struct GeneratorWrapper {
+    generator: Generator,
 }
 
-impl<'a> Generator<'a> {
-    pub fn new(ntust_id: &'a str) -> Self {
-        Self { ntust_id }
+#[wasm_bindgen(js_class = Generator)]
+impl GeneratorWrapper {
+    #[wasm_bindgen(constructor)]
+    pub fn new(ntust_id: &str) -> GeneratorWrapper {
+        GeneratorWrapper {
+            generator: Generator::new(ntust_id),
+        }
+    }
+
+    pub fn ntust_id(&self) -> String {
+        self.generator.ntust_id().to_string()
+    }
+
+    pub fn generate(&mut self) -> Result<GenerateResult, JsError> {
+        match self.generator.generate() {
+            Ok(r) => Ok(r),
+            Err(e) => Err(JsError::new(e.to_string().as_str())),
+        }
+    }
+}
+
+pub struct Generator {
+    ntust_id: String,
+}
+
+impl Generator {
+    pub fn new(ntust_id: &str) -> Self {
+        Self {
+            ntust_id: ntust_id.to_string(),
+        }
     }
 
     pub fn ntust_id(&self) -> &str {
-        self.ntust_id
+        self.ntust_id.as_str()
     }
 
     pub fn generate(&self) -> anyhow::Result<GenerateResult> {
@@ -72,6 +103,7 @@ impl<'a> Generator<'a> {
     }
 }
 
+#[wasm_bindgen]
 #[derive(Copy, Clone, Debug)]
 pub enum Operation {
     Shift,
@@ -80,15 +112,17 @@ pub enum Operation {
     Done,
 }
 
+#[wasm_bindgen]
 #[derive(Clone, Debug)]
 pub struct Step {
     product: Product,
     next_operation: Operation,
 }
 
+#[wasm_bindgen]
 impl Step {
-    pub fn product(&self) -> &Product {
-        &self.product
+    pub fn product(&self) -> Product {
+        self.product.clone()
     }
 
     pub fn next_operation(&self) -> Operation {
@@ -96,6 +130,7 @@ impl Step {
     }
 }
 
+#[wasm_bindgen]
 pub struct GenerateResult {
     a: i64,
     b: i64,
@@ -106,6 +141,7 @@ pub struct GenerateResult {
     product: Product,
 }
 
+#[wasm_bindgen]
 impl GenerateResult {
     pub fn a(&self) -> i64 {
         self.a
@@ -132,14 +168,14 @@ impl GenerateResult {
     }
 }
 
+#[wasm_bindgen]
 #[derive(Clone, Debug)]
 pub struct Product {
     number: i64,
 }
 
+#[wasm_bindgen]
 impl Product {
-    const MAX: i64 = 0b111111111111111111111111111111111;
-
     pub fn new(number: i64) -> Self {
         Self { number }
     }
@@ -177,7 +213,7 @@ impl Product {
     }
 
     pub fn shift(&mut self) {
-        let shifted = (self.number >> 1) & Self::MAX;
+        let shifted = (self.number >> 1) & MASK;
 
         let padding = 33 - 1;
 
@@ -192,8 +228,8 @@ impl Product {
     }
 
     pub fn add(&mut self, n: i64) {
-        let tmp: i64 = ((n << 16) << 1) & Self::MAX;
-        self.number = (self.number + tmp) & Self::MAX;
+        let tmp: i64 = ((n << 16) << 1) & MASK;
+        self.number = (self.number + tmp) & MASK;
     }
 
     pub fn sub(&mut self, n: i64) {
