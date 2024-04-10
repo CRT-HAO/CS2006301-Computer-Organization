@@ -1,6 +1,8 @@
 use std::fmt;
 use wasm_bindgen::prelude::*;
 
+pub mod result;
+
 const MASK: i64 = 0b111111111111111111111111111111111;
 
 #[wasm_bindgen(js_name = Generator)]
