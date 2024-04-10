@@ -18,7 +18,7 @@
   }
 </script>
 
-<span on:click={click} class:relative>
+<span on:click={click} class:relative aria-hidden={true}>
   <slot name="label" />
 
   {#if active}
