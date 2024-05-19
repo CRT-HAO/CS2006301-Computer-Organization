@@ -13,7 +13,7 @@ Then compile it into a RISC-V platform executable for simulation in the gem5 sim
 
 ### Test Environment
 
-![Screenshot 2024-05-19 at 10.13.19 PM](./assets/Screenshot 2024-05-19 at 10.13.19 PM.png)
+![fastfetch](./assets/fastfetch.png)
 
 #### macOS
 
