@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# Test results
+m5out/
+
+# Executables
+build/
