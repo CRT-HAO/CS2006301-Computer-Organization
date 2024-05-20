@@ -45,7 +45,7 @@ def extract_miss_rate(stats_file: str) -> tuple[Decimal, Decimal]:
     return dcache_miss_rate, icache_miss_rate
 
 
-def calculate_growth_rate(new_rate, base_rate):
+def calculate_growth_rate(new_rate: Decimal, base_rate: Decimal) -> Decimal:
     return ((new_rate - base_rate) / base_rate * 100).quantize(Decimal("0.01"))
 
 
@@ -130,10 +130,11 @@ def main(gem5_executable: str, gem5_config: str, test_program: str) -> None:
             icache_miss_rate, base_icache_miss_rate
         )
 
-        print(f"Cacheline Size: {cacheline_size}")
-        print(f"Data Cache Miss Rate Growth: {dcache_miss_growth}%")
-        print(f"Instruction Cache Miss Rate Growth: {icache_miss_growth}%")
-        print("\n")
+        print("=" * 50)
+        print(f"Cacheline Size = {cacheline_size} bytes")
+        print(f"Data Cache Miss Rate Growth = {dcache_miss_growth}%")
+        print(f"Instruction Cache Miss Rate Growth = {icache_miss_growth}%")
+        print("=" * 50)
 
 
 if __name__ == "__main__":
